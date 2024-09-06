@@ -2,29 +2,31 @@ import { useState, useContext } from 'react'
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
-import LitJsSdk from 'lit-js-sdk'
+import { LitNodeClient } from "@lit-protocol/lit-node-client";
+import { LitNetwork } from "@lit-protocol/constants";
+import { checkAndSignAuthMessage } from "@lit-protocol/auth-browser";
 import Cookies from 'js-cookie'
 import { UUIDContext } from '../context'
 
 const accessControlConditions = [
   {
-    contractAddress: '0x25ed58c027921E14D86380eA2646E3a1B5C55A8b',
-    standardContractType: 'ERC721',
-    chain: 'ethereum',
-    method: 'balanceOf',
+    contractAddress: '',
+    standardContractType: '',
+    chain: 'verifyTestnet',
+    method: '',
     parameters: [
-      ':userAddress'
+      ':userAddress',
     ],
     returnValueTest: {
-      comparator: '>',
-      value: '0'
+      comparator: '=',
+      value: '0xaB9BE0f5521B121b738d29EAcD3683F22F38eCF0'
     }
-  }
-]
+  }]
 
 
 export default function Home() {
   const [connected, setConnected] = useState()
+  const [jwtIssued, setJwtIssued] = useState();
   const { id } = useContext(UUIDContext)
 
   async function connect() {
@@ -36,22 +38,20 @@ export default function Home() {
       extraData: id
     }
 
-    const client = new LitJsSdk.LitNodeClient({ alertWhenUnauthorized: false })
+    const client = new LitNodeClient({ litNetwork: LitNetwork.DatilDev })
     await client.connect()
-    const authSig = await LitJsSdk.checkAndSignAuthMessage({chain: 'ethereum'})
-
-    await client.saveSigningCondition({ accessControlConditions, chain: 'ethereum', authSig, resourceId })
+    const authSig = await checkAndSignAuthMessage({chain: 'verifyTestnet'})
     try {
       const jwt = await client.getSignedToken({
-        accessControlConditions, chain: 'ethereum', authSig, resourceId: resourceId
+        accessControlConditions, chain: 'verifyTestnet', authSig, resourceId: resourceId
       })
       Cookies.set('lit-auth', jwt, { expires: 1 })
-
+      setJwtIssued(jwt);
+      setConnected(true)
     } catch (err) {
       console.log('error: ', err)
     }
-    setConnected(true)
-
+    await client.disconnect();
   }
 
   return (
@@ -64,9 +64,9 @@ export default function Home() {
 
       <h1>Developer DAO Access</h1>
       {
-        !connected && <button onClick={connect}>Connect</button>
+        !connected ? <button onClick={connect}>Connect</button> :  <><p>Access Granted</p><textarea style={{width: '70vw',height: '100px'}}>{jwtIssued}</textarea></>
       }
-     
+
       <footer className={styles.footer}>
         <a
           href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
