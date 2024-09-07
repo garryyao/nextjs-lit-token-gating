@@ -1,42 +1,46 @@
-This is a minimal example of how to token-gate a Next.js page using [Lit Protocol](https://developer.litprotocol.com/) using `getServerSideProps`.
+This is a minimal example illustrate how a Decentralized Applications (dApps) can token-gate a Next.js page using [Lit Protocol](https://www.litprotocol.com/) using their web sdk `@lit-protocol/lit-node-client`.   
 
 
-This token gates a `/protected` page checking to see if the user has a [Devs for Revolution](https://etherscan.io/address/0x25ed58c027921e14d86380ea2646e3a1b5c55a8b) ERC721 token.
+This token gates a `/protected` page with access control conditions to see:
+ - if the user's wallet address matches a specific user on a blockchain network.
 
-To run this example:
+The app then issues a signed JWT which can be later verified by any other dApps through the protocol.   
 
-1. Clone the repo and install dependencies
+To get this example working, you will need to set up a crypto wallet if you don't have one. Google "how to get a blockchain
+wallet". 
 
 ```sh
-git clone git@github.com:dabit3/nextjs-lit-token-gating.git
-
 cd nextjs-lit-token-gating
 
 npm install
 ```
 
-2. Update the `accessControlConditions` with the contract address of the NFT you'd like to use:
+2. Update the [`accessControlConditions`](./pages/index.js#L11) with the contract address of the NFT you'd like to use:
 
 ```javascript
 const accessControlConditions = [
   {
-    contractAddress: '0x25ed58c027921E14D86380eA2646E3a1B5C55A8b',
-    standardContractType: 'ERC721',
-    chain: 'ethereum',
-    method: 'balanceOf',
+    contractAddress: '',
+    standardContractType: '',
+    chain: '<your_network_name>',
+    method: '',
     parameters: [
-      ':userAddress'
+      ':userAddress',
     ],
     returnValueTest: {
-      comparator: '>',
-      value: '0'
+      comparator: '=',
+      value: '<your_wallet_address>'
     }
   }
 ]
 ```
+You can also try to use access control conditions using any valid conditions that [Lit supports](https://developer.litprotocol.com/sdk/access-control/condition-types/unified-access-control-conditions).
 
 3. Start the app
 
 ```sh
 npm run dev
 ```
+Open http://localhost:3000, click on the **Connect** button to authenticate, which will prompt you to connect your wallet.
+
+Once logging in with your wallet, you shall be able to see access granted and receive a token.
