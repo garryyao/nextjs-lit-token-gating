@@ -1,13 +1,21 @@
-This is a minimal example illustrate how a Decentralized Applications (dApps) can token-gate a Next.js page using [Lit Protocol](https://www.litprotocol.com/) using their web sdk `@lit-protocol/lit-node-client`.   
+# Next.js Lit Protocol Token Gating Example
 
+This minimal example demonstrates how to implement token gating in a Decentralized Application (dApp) using [Lit Protocol](https://www.litprotocol.com/) and Next.js.
 
-This token gates a `/protected` page with access control conditions to see:
- - if the user's wallet address matches a specific user on a blockchain network.
+## Features
 
-The app then issues a signed JWT which can be later verified by any other dApps through the protocol.   
+- Token gates the `/protected` page using Lit Protocol's access control conditions
+- Verifies if the user's wallet address matches a specific address on a blockchain network
+- Issues a signed JWT for cross-dApp verification
 
-To get this example working, you will need to set up a crypto wallet if you don't have one. Google "how to get a blockchain
-wallet". 
+## Prerequisites
+
+- A crypto wallet (e.g., MetaMask)
+- Node.js v18 or later
+
+## Quick Start
+
+1. Clone and install dependencies:
 
 ```sh
 cd nextjs-lit-token-gating
